@@ -7,6 +7,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Email Not Found" }, { status: 404 });
   }
   const token = Math.floor(100000 + Math.random() * 900000).toString();
+  console.log("Token", token);
   const response = await verifyEmail(email, token, name);
   if (response) {
     return NextResponse.json({ token, email }, { status: 200 });

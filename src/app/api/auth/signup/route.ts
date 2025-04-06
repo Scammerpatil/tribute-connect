@@ -41,6 +41,8 @@ export async function POST(req: NextRequest) {
     const newUser = new User({
       ...formData,
       password: hashedPassword,
+      followers: [],
+      following: [],
     });
 
     await newUser.save();

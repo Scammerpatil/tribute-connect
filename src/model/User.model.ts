@@ -9,6 +9,7 @@ const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   phone: {
     type: String,
@@ -28,18 +29,17 @@ const UserSchema = new Schema({
   },
   followers: [
     {
-      type: Schema.Types.ObjectId,
+      type: [Schema.Types.ObjectId],
       ref: "User",
-      unique: true,
+      default: [],
     },
   ],
-  following: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      unique: true,
-    },
-  ],
+  following: {
+    type: [Schema.Types.ObjectId],
+    ref: "User",
+    default: [],
+  },
+
   pinnedTribute: [
     {
       type: Schema.Types.ObjectId,
