@@ -23,6 +23,11 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
     icon: <IconUsers width="24" height="24" />,
   },
   {
+    title: "Manage Your Tributes",
+    path: "/user/manage-tributes",
+    icon: <IconTrident width="24" height="24" />,
+  },
+  {
     title: "Profile",
     path: "/user/profile",
     icon: <IconUser width="24" height="24" />,

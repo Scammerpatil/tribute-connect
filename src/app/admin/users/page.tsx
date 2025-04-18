@@ -60,19 +60,20 @@ const UserPage = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold text-center mb-6">Manage Users</h1>
+      <h1 className="text-4xl uppercase font-bold text-center mb-6">
+        Manage Users
+      </h1>
 
       <div className="overflow-x-auto">
         <table className="table table-zebra">
-          {/* Table Head */}
-          <thead className="text-base-content bg-base-200 text-base ">
+          <thead className="text-base-content bg-base-200 text-base">
             <tr>
               <th>#</th>
               <th>Name</th>
               <th>Email</th>
               <th>Contact Number</th>
               <th>Status</th>
-              <th>Actions</th>
+              <th className="text-center">Actions</th>
             </tr>
           </thead>
 
@@ -85,7 +86,23 @@ const UserPage = () => {
                   className="border-b border-base-content hover:bg-base-300 transition"
                 >
                   <td className="text-center">{index + 1}</td>
-                  <td className="text-semibold">{user.name}</td>
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle h-12 w-12">
+                          <img src={user.profileImage} alt={user.name} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold capitalize">{user.name}</div>
+                        <div className="text-sm opacity-50">
+                          {user.isPremiumHolder
+                            ? "Perimum User"
+                            : "Normal User"}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                   <td>
                     <a
                       href={`mailto:${user.email}`}
@@ -130,7 +147,7 @@ const UserPage = () => {
               ))
             ) : (
               <tr className="text-center py-6 text-base-content/50">
-                <td colSpan={5} className="py-3">
+                <td colSpan={6} className="py-3">
                   No users found.
                 </td>
               </tr>

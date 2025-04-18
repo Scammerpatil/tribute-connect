@@ -53,21 +53,41 @@ const ManageTributesPage = () => {
     }
   };
 
+  const handleApprove = async (id: string, status: Boolean) => {
+    try {
+      const res = axios.get(`/api/tributes/approve?id=${id}&status=${status}`);
+      toast.promise(res, {
+        loading: "Approving tribute...",
+        success: "Tribute approved successfully",
+        error: "Failed to approve tribute",
+      });
+    } catch (error) {
+      console.error("Failed to approve tribute:", error);
+      toast.error("Failed to approve tribute");
+    }
+  };
+
   const totalPages = Math.ceil(tributes.length / tributesPerPage);
   return (
     <>
       <div className="container mx-auto">
         {tributes.length === 0 && (
-          <p className="text-center text-error text-lg">
-            No tributes available yet.
-          </p>
+          <div>
+            <img
+              src="/404.png"
+              alt="No tributes found"
+              className="w-auto mx-auto h-96 "
+            />
+            <h2 className="text-2xl uppercase font-bold text-base-content text-center mt-4">
+              No Tributes Found
+            </h2>
+          </div>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
           {currentTributes.map((tribute) => (
-            <Link
+            <div
               key={tribute._id}
-              href={`/tribute/${tribute._id}`}
               className="bg-base-100 shadow-lg rounded-xl overflow-hidden border border-primary"
             >
               <div className="h-52 w-full overflow-hidden">
@@ -83,7 +103,7 @@ const ManageTributesPage = () => {
                   {tribute.name}
                 </h2>
                 <p className="mb-3 text-sm text-center text-base-content/70">
-                  {tribute.description}
+                  {tribute.description.slice(0, 100)}...
                 </p>
 
                 <div className="mt-4 flex justify-between items-center text-sm text-base-content/80 bg-base-200 p-3 rounded-lg">
@@ -106,7 +126,21 @@ const ManageTributesPage = () => {
                 >
                   <IconTrash /> Delete
                 </button>
-
+                {tribute.isAdminApproved ? (
+                  <button
+                    className="btn btn-primary btn-outline flex items-center gap-2 mt-3"
+                    onClick={() => handleApprove(tribute._id as string, false)}
+                  >
+                    <IconHeart /> Approved
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-warning btn-outline flex items-center gap-2 mt-3"
+                    onClick={() => handleApprove(tribute._id as string, true)}
+                  >
+                    <IconHeart /> Pending Approval
+                  </button>
+                )}
                 <div className="divider"></div>
 
                 <div className="flex items-center space-x-3">
@@ -129,8 +163,18 @@ const ManageTributesPage = () => {
                     </p>
                   </div>
                 </div>
+                <p className="text-sm text-base-content/70 text-center py-4">
+                  Supporting document:
+                  <a
+                    href={tribute.supportingDocument}
+                    className="font-semibold text-primary"
+                    target="_blank"
+                  >
+                    {tribute.supportingDocument.split("/").pop()}
+                  </a>
+                </p>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
 

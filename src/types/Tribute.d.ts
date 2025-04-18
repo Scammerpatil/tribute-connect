@@ -6,6 +6,8 @@ export interface Tribute {
   dod: Date;
   user: User;
   image: string;
+  supportingDocument: string;
+  isAdminApproved?: boolean;
   likes?: {
     user: User;
   }[];

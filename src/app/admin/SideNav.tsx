@@ -14,12 +14,20 @@ import {
   IconTrident,
 } from "@tabler/icons-react";
 import { useAuth } from "@/context/AuthProvider";
+import toast from "react-hot-toast";
 
 const SideNav = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { user } = useAuth();
   const handleLogout = async () => {
-    await axios.get("/api/auth/logout");
+    const res = axios.get("/api/auth/logout");
+    toast.promise(res, {
+      loading: "Logging out...",
+      success: "Logged out successfully",
+      error: (err) => {
+        return err.response.data.message;
+      },
+    });
     router.push("/");
   };
   const pathname = usePathname();
@@ -131,7 +139,7 @@ const SideNav = ({ children }: { children: React.ReactNode }) => {
           ></label>
           <div className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
             <Link
-              href="/user/dashboard"
+              href="/admin/dashboard"
               className="flex h-16 w-full flex-row items-center justify-center space-x-3 border-b border-base-content md:justify-start md:px-6"
             >
               <span className="h-7 w-7 rounded-lg bg-base-200">

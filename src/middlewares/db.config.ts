@@ -1,3 +1,5 @@
+import Tribute from "@/model/Tribute.model";
+import User from "@/model/User.model";
 import mongoose from "mongoose";
 
 // Database Connection
@@ -12,6 +14,8 @@ const dbConfig = async () => {
     connection.on("error", (error) => {
       console.log("Error: ", error);
     });
+    User;
+    Tribute;
   } catch (error) {
     console.log("Error: ", error);
   }

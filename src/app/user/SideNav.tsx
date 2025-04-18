@@ -14,12 +14,20 @@ import {
   IconTrident,
 } from "@tabler/icons-react";
 import { useAuth } from "@/context/AuthProvider";
+import toast from "react-hot-toast";
 
 const SideNav = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { user } = useAuth();
   const handleLogout = async () => {
-    await axios.get("/api/auth/logout");
+    const res = axios.get("/api/auth/logout");
+    toast.promise(res, {
+      loading: "Logging out...",
+      success: "Logged out successfully",
+      error: (err) => {
+        return err.response.data.message;
+      },
+    });
     router.push("/");
   };
   const pathname = usePathname();

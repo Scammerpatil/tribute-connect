@@ -48,19 +48,28 @@ const SignUp = () => {
     }
   };
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!formData.name) {
+      toast.error("Name is required for images");
+      return;
+    }
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (file.size > 5 * 1024 * 1024) {
         alert("File size exceeds 5MB");
         return;
       }
-      const imageResponse = axios.postForm("/api/helper/upload-img", { file });
+      const imageResponse = axios.postForm("/api/helper/upload-img", {
+        file,
+        name: formData.name,
+        folderName: "profileImages",
+      });
+      console.log(imageResponse);
       toast.promise(imageResponse, {
         loading: "Uploading Image...",
         success: (data: AxiosResponse) => {
           setFormData({
             ...formData,
-            profileImage: data.data.data.url,
+            profileImage: data.data.path,
           });
           return "Image Uploaded Successfully";
         },
@@ -103,7 +112,7 @@ const SignUp = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center w-full bg-base-200 px-5 py-5 h-[calc(100vh-5rem)]">
+    <div className="flex justify-center items-center w-full bg-base-200 px-5 py-5 h-[calc(100vh-5.7rem)]">
       <div className="xl:max-w-7xl bg-base-100 drop-shadow-xl border border-base-content/20 w-full rounded-md flex justify-between items-stretch px-5 xl:px-5 py-5">
         <div className="sm:w-[60%] lg:w-[50%] bg-cover bg-center items-center justify-center hidden md:flex ">
           <img src="login.png" alt="login" className="h-[500px]" />
@@ -159,7 +168,7 @@ const SignUp = () => {
               </div>
               <input
                 type="file"
-                className="file-input file-input-bordered w-full text-base-content"
+                className="file-input file-input-primary file-input-bordered w-full text-base-content"
                 accept="image/* .png .jpeg .jpg"
                 onChange={handleProfileImageChange}
               />

@@ -45,62 +45,70 @@ const LearnMore = () => {
   };
 
   if (!tribute)
-    return <p className="text-center text-error">Tribute not found.</p>;
+    return (
+      <div className="text-center py-20">
+        <img src="/404.png" alt="No tributes found" className="mx-auto h-96" />
+        <h2 className="text-2xl font-bold text-base-content mt-4">
+          No Tributes Found
+        </h2>
+      </div>
+    );
 
   return (
-    <>
-      <div className="bg-base-200 shadow-lg rounded-lg overflow-hidden">
+    <div className="max-w-4xl mx-auto px-4">
+      {/* Tribute Header */}
+      <div className="bg-base-200 shadow-xl rounded-xl overflow-hidden">
         <Image
           src={tribute.image || "/avatar.png"}
           alt={tribute.name}
-          width={600}
-          height={300}
-          className="w-full h-96 object-cover"
+          width={800}
+          height={400}
+          className="w-full h-96 object-contain"
         />
-        <div className="p-6">
-          <h1 className="text-3xl font-bold text-primary mb-2">
-            {tribute.name}
-          </h1>
-          <p className="text-base-content/70 text-lg mb-4">
-            {tribute.description}
-          </p>
-          <div className="flex justify-between text-base-content/80">
+        <div className="p-6 space-y-4">
+          <h1 className="text-4xl font-bold text-primary">{tribute.name}</h1>
+          <p className="text-base-content/80 text-lg">{tribute.description}</p>
+          <div className="flex flex-col sm:flex-row justify-between gap-2 text-base-content/70">
             <p>
-              <strong>Born:</strong> {new Date(tribute.dob).toDateString()}
+              <strong>Born:</strong>{" "}
+              {new Date(tribute.dob).toLocaleDateString("en-IN")}
             </p>
             <p>
-              <strong>Passed:</strong> {new Date(tribute.dod).toDateString()}
+              <strong>Passed:</strong>{" "}
+              {new Date(tribute.dod).toLocaleDateString("en-IN")}
             </p>
           </div>
-          <div className="flex justify-between mt-4">
-            <span className="text-lg font-bold text-secondary flex items-center gap-2">
-              <IconHeart /> {tribute.likes?.length} Likes
+
+          <div className="flex flex-col sm:flex-row justify-between mt-4 gap-2">
+            <span className="text-lg font-semibold text-secondary flex items-center gap-2">
+              <IconHeart size={20} /> {tribute.likes?.length} Likes
             </span>
-            <span className="text-lg font-bold text-success flex items-center gap-2">
+            <span className="text-lg font-semibold text-success flex items-center gap-2">
               💰 ₹{tribute.funding?.reduce((acc, curr) => acc + curr.amount, 0)}{" "}
               Raised
             </span>
           </div>
-          <hr className="my-4" />
+        </div>
+      </div>
 
-          {/* Comments Section */}
-          <h2 className="text-2xl font-semibold text-primary">Comments</h2>
-          <div className="mt-4 space-y-4">
-            {tribute.comments?.map((c, index) => (
+      {/* Comments Section */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-semibold text-primary mb-4">Comments</h2>
+        <div className="space-y-4">
+          {tribute?.comments!.length > 0 ? (
+            tribute.comments!.map((c, index) => (
               <div
                 key={index}
-                className="bg-base-300 p-4 rounded-lg shadow flex items-end w-full justify-between"
+                className="bg-base-300 p-4 rounded-lg shadow flex justify-between items-start"
               >
-                <div className="flex items-center gap-2">
-                  <div className="avatar">
-                    <Image
-                      src={c.user.profileImage || "/default-avatar.png"}
-                      alt={c.user.name}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                  </div>
+                <div className="flex items-start gap-3">
+                  <Image
+                    src={c.user.profileImage || "/default-avatar.png"}
+                    alt={c.user.name}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
                   <div>
                     <p className="font-semibold text-base-content">
                       {c.user.name}
@@ -108,29 +116,68 @@ const LearnMore = () => {
                     <p className="text-base-content/70">{c.comment}</p>
                   </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-sm text-base-content/70">
-                    {new Date(c.timestamp).toDateString()}
-                  </p>
+                <p className="text-sm text-base-content/60 mt-1">
+                  {new Date(c.timestamp).toLocaleDateString("en-IN")}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="text-base-content/70">No comments yet.</p>
+          )}
+        </div>
+        {/* Comment Input */}
+        <div className="mt-6 flex gap-2">
+          <input
+            type="text"
+            placeholder="Add a comment..."
+            className="input input-bordered w-full"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <button className="btn btn-primary" onClick={handleAddComment}>
+            <IconMessageCircle size={18} /> Post
+          </button>
+        </div>
+      </div>
+
+      {/* Funding History */}
+      {tribute.funding!.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold text-primary mb-4">
+            Funding History
+          </h2>
+          <div className="space-y-4">
+            {tribute.funding!.map((f, index) => (
+              <div
+                key={index}
+                className="bg-base-300 p-4 rounded-lg shadow flex justify-between items-center"
+              >
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={f.user?.profileImage || "/default-avatar.png"}
+                    alt={f.user?.name || "Anonymous"}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                  <div>
+                    <p className="font-semibold text-base-content">
+                      {f.user?.name || "Anonymous"}
+                    </p>
+                    <p className="text-sm text-base-content/70">
+                      Donated on {new Date(f.date).toLocaleDateString("en-IN")}
+                    </p>
+                  </div>
                 </div>
+                <p className="text-success font-semibold text-lg">
+                  ₹{f.amount}
+                </p>
               </div>
             ))}
           </div>
-          <div className="mt-4 flex gap-2">
-            <input
-              type="text"
-              placeholder="Add a comment..."
-              className="input input-bordered w-full"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <button className="btn btn-primary" onClick={handleAddComment}>
-              <IconMessageCircle /> Post
-            </button>
-          </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

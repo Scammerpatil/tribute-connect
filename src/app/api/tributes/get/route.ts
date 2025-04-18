@@ -10,7 +10,9 @@ export async function GET(req: NextRequest) {
   try {
     const tribute = await Tribute.findById(id)
       .populate("user")
-      .populate("comments.user");
+      .populate("comments.user")
+      .populate("likes.user")
+      .populate("funding.user");
     if (!tribute) {
       return NextResponse.json(
         { message: "Tribute not found" },

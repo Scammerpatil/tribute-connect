@@ -28,7 +28,6 @@ const Tributes = () => {
     fetchTributes();
   }, []);
 
-  // Pagination Logic
   const indexOfLastTribute = currentPage * tributesPerPage;
   const indexOfFirstTribute = indexOfLastTribute - tributesPerPage;
   const currentTributes = tributes.slice(
@@ -108,18 +107,18 @@ const Tributes = () => {
                     <div className="w-12 rounded-full">
                       <img
                         src={
-                          tribute.user.profileImage || "/user-placeholder.png"
+                          tribute.user?.profileImage || "/user-placeholder.png"
                         }
-                        alt={tribute.user.name}
+                        alt={tribute.user?.name}
                       />
                     </div>
                   </div>
                   <div>
                     <p className="font-semibold text-base-content">
-                      {tribute.user.name}
+                      {tribute.user?.name}
                     </p>
                     <p className="text-xs text-base-content">
-                      {tribute.user.email}
+                      {tribute.user?.email}
                     </p>
                   </div>
                 </div>

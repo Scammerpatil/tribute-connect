@@ -1,30 +1,30 @@
-import { cloudinaryUpload } from "@/hooks/useCloudinaryUpload";
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
 export async function POST(req: NextRequest) {
   try {
     const request = await req.formData();
     const file = request.get("file");
-
-    if (file instanceof Blob) {
-      const fileStream = Buffer.from(await file.arrayBuffer());
-      const response = await cloudinaryUpload(
-        fileStream,
-        "travelbuddy",
-        file.name
+    var name = request.get("name") as string;
+    name = name.split(" ").join("_");
+    const folderName = request.get("folderName");
+    if (!fs.existsSync(`public/${folderName}`)) {
+      fs.mkdirSync(`public/${folderName}`);
+    }
+    if (file instanceof Blob && typeof name === "string") {
+      const fileBuffer = Buffer.from(await file.arrayBuffer());
+      const filePath = path.join(
+        `public/${folderName}`,
+        name + `.${file.name.split(".").pop()}`
       );
+      fs.writeFileSync(filePath, fileBuffer);
+      const imagePath = `/${folderName}/${name}.${file.name.split(".").pop()}`;
 
-      if (response) {
-        return NextResponse.json({ success: true, data: response });
-      } else {
-        return NextResponse.json(
-          { success: false, error: "Unknown error occurred during upload." },
-          { status: 500 }
-        );
-      }
+      return NextResponse.json({ success: true, path: imagePath });
     } else {
       return NextResponse.json(
-        { success: false, error: "Uploaded file is not a valid Blob" },
+        { success: false, error: "Invalid file or filename" },
         { status: 400 }
       );
     }

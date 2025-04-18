@@ -1,55 +1,111 @@
 "use client";
-import React from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import {
-  IconUsers,
-  IconMap,
-  IconMessage,
-  IconSettings,
-  IconHelpCircle,
-} from "@tabler/icons-react";
-import { useAuth } from "@/context/AuthProvider";
-import { SIDENAV_ITEMS } from "../constant";
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+} from "recharts";
+import { IconHeart, IconMoneybag, IconTrident } from "@tabler/icons-react";
 
-const UserDashboardPage = () => {
-  const { user } = useAuth();
-  if (!user) return null;
+const COLORS = ["#6366F1", "#10B981", "#F59E0B", "#EF4444"];
+
+const UserDashboard = () => {
+  const [dashboard, setDashboard] = useState({
+    totalLikesGiven: 0,
+    totalFundRaised: 0,
+    totalTributes: 0,
+    fundingData: [],
+    topLiked: [],
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get(`/api/user/dashboard`);
+      setDashboard(res.data);
+    };
+    fetchData();
+  }, []);
+
   return (
-    <div className="w-full flex items-center justify-center flex-col gap-4">
-      <h1 className="text-3xl font-bold text-primary mb-4">
-        Welcome, {user?.name}!
-      </h1>
-      <div className="flex flex-row flex-wrap gap-4 items-center justify-center">
-        {SIDENAV_ITEMS.map((item, index) => (
-          <DashboardCard
-            key={index}
-            title={item.title}
-            path={item.path}
-            icon={item.icon}
-          />
-        ))}
+    <>
+      <div className="stats shadow w-full bg-base-300">
+        <div className="stat">
+          <div className="stat-figure text-primary">
+            <IconHeart size={40} />
+          </div>
+          <div className="stat-title">Likes Given</div>
+          <div className="stat-value text-primary">
+            {dashboard.totalLikesGiven}
+          </div>
+        </div>
+        <div className="stat">
+          <div className="stat-figure text-secondary">
+            <IconMoneybag size={40} />
+          </div>
+          <div className="stat-title">Total Fund Raised</div>
+          <div className="stat-value text-secondary">
+            ₹{dashboard.totalFundRaised}
+          </div>
+        </div>
+        <div className="stat">
+          <div className="stat-figure text-success">
+            <IconTrident size={40} />
+          </div>
+          <div className="stat-title text-success">Your Tributes</div>
+          <div className="stat-value text-success">
+            {dashboard.totalTributes}
+          </div>
+        </div>
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        <div className="bg-base-300 p-4 rounded-lg shadow w-full">
+          <h2 className="text-xl font-bold mb-4">Monthly Funding Overview</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dashboard.fundingData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="amount" fill="#10B981" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Top Liked Tributes Pie Chart */}
+        <div className="bg-base-300 p-4 rounded-lg shadow w-full">
+          <h2 className="text-xl font-bold mb-4">Top Liked Tributes</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={dashboard.topLiked}
+                dataKey="likes"
+                nameKey="name"
+                outerRadius={100}
+                label
+              >
+                {dashboard.topLiked.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </>
   );
 };
 
-const DashboardCard = ({
-  title,
-  icon,
-  path,
-}: {
-  title: string;
-  path: string;
-  icon: React.ReactNode;
-}) => {
-  return (
-    <a
-      href={path}
-      className="card bg-base-300 w-1/3 shadow-lg p-4 flex items-center space-x-4 hover:bg-primary hover:text-primary-content transition"
-    >
-      <span className="text-3xl">{icon}</span>
-      <h2 className="text-lg font-semibold">{title}</h2>
-    </a>
-  );
-};
-
-export default UserDashboardPage;
+export default UserDashboard;
