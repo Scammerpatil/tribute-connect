@@ -3,10 +3,14 @@ import { useAuth } from "@/context/AuthProvider";
 import { Tribute } from "@/types/Tribute";
 import axios, { AxiosResponse } from "axios";
 import { useState } from "react";
+import Markdown from "react-markdown";
 import toast from "react-hot-toast";
 
 const AddTribute = () => {
   const { user } = useAuth();
+  const [generatedDescriptions, setGeneratedDescriptions] = useState<string[]>(
+    []
+  );
   const [tribute, setTribute] = useState<Tribute>({
     name: "",
     description: "",
@@ -109,6 +113,32 @@ const AddTribute = () => {
       },
     });
   };
+  const handleGenerateDescription = async () => {
+    if (!tribute.name) return toast.error("Name is required");
+    if (!tribute.description) return toast.error("Description is Required!!");
+    try {
+      const res = axios.post("/api/helper/generate-description", {
+        name: tribute.name,
+        desc: tribute.description,
+      });
+      toast.promise(res, {
+        loading: "Generating Description...",
+        success: (data) => {
+          setGeneratedDescriptions(data.data.options);
+          return "Descriptions Generated Successfully";
+        },
+        error: (err: any) => {
+          console.log(err);
+          return err.response?.data?.message || "Error generating description";
+        },
+      });
+      (
+        document.getElementById("description-dialog") as HTMLDialogElement
+      ).showModal();
+    } catch (error) {
+      toast.error("Failed to generate descriptions");
+    }
+  };
   return (
     <>
       <h1 className="text-3xl font-bold text-center mb-6 uppercase">
@@ -140,6 +170,13 @@ const AddTribute = () => {
                 setTribute({ ...tribute, description: e.target.value });
               }}
             />
+            <button
+              className="btn btn-secondary btn-sm w-full mt-3"
+              onClick={handleGenerateDescription}
+              disabled={!tribute.name || !tribute.description}
+            >
+              Generate with AI
+            </button>
           </label>
           <label className="form-control w-full">
             <div className="label">
@@ -199,6 +236,36 @@ const AddTribute = () => {
           </button>
         </div>
       </div>
+      <dialog id="description-dialog" className="modal">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
+          <div className="modal-box w-11/12 max-w-5xl">
+            <h3 className="font-bold text-lg">Choose a Description !</h3>
+            <div className="modal-action">
+              <form method="dialog">
+                <div className="space-y-3">
+                  {generatedDescriptions.map((desc, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 border border-base-content/20 rounded hover:bg-base-300 cursor-pointer"
+                      onClick={() => {
+                        setTribute({ ...tribute, description: desc });
+                        (
+                          document.getElementById(
+                            "description-dialog"
+                          ) as HTMLDialogElement
+                        ).close();
+                      }}
+                    >
+                      <Markdown>{desc}</Markdown>
+                    </div>
+                  ))}
+                </div>
+                <button className="btn">Close</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </>
   );
 };

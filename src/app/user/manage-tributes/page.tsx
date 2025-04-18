@@ -11,7 +11,7 @@ const ManageTributesPage = () => {
 
   useEffect(() => {
     const fetchTributes = async () => {
-      const response = await axios.get("/api/tributes");
+      const response = await axios.get("/api/tributes/get-tributes");
       setTributes(response.data.tributes);
     };
     fetchTributes();

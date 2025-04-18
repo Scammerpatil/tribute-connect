@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.0",
     "@tabler/icons-react": "^3.30.0",
     "axios": "^1.7.9",
     "bcryptjs": "^3.0.2",
@@ -22,6 +23,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
+    "react-markdown": "^10.1.0",
     "recharts": "^2.15.3"
   },
   "devDependencies": {
