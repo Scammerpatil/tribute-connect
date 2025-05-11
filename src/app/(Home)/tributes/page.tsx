@@ -2,7 +2,9 @@
 
 import { Tribute } from "@/types/Tribute";
 import {
-  IconHeart,
+  IconBrandFacebook,
+  IconBrandLinkedin,
+  IconBrandTwitter,
   IconChevronLeft,
   IconChevronRight,
 } from "@tabler/icons-react";
@@ -38,92 +40,121 @@ const Tributes = () => {
   const totalPages = Math.ceil(tributes.length / tributesPerPage);
 
   return (
-    <section className="bg-base-300 min-h-[calc(100vh-6rem)] py-10 px-10">
+    <section className="bg-base-100 min-h-[calc(100vh-6rem)] py-10 px-10">
       <div className="container mx-auto">
         {tributes.length === 0 && (
-          <p className="text-center text-error text-lg">
-            No tributes available yet.
-          </p>
+          <div>
+            <img
+              src="/404.png"
+              alt="No tributes found"
+              className="w-auto mx-auto h-96 "
+            />
+            <h2 className="text-2xl uppercase font-bold text-base-content text-center mt-4">
+              No Tributes Found
+            </h2>
+          </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {currentTributes.map((tribute) => (
-            <Link
+            <div
               key={tribute._id}
-              href={`/tribute/${tribute._id}`}
-              className="bg-base-100 shadow-lg rounded-xl overflow-hidden border border-primary"
+              className="card bg-base-300 shadow-xl border border-primary"
             >
-              {/* Tribute Image */}
-              <div className="h-52 w-full overflow-hidden">
-                <img
-                  className="w-full h-full object-cover"
-                  src={tribute.image || "/avatar.png"}
-                  alt={tribute.name}
-                />
-              </div>
-
-              {/* Tribute Content */}
-              <div className="p-5 flex flex-col justify-between">
-                <h2 className="mb-2 text-xl font-semibold text-center text-secondary">
+              <Link href={`/tribute?id=${tribute._id}`}>
+                <figure className="h-52 overflow-hidden">
+                  <img
+                    className="object-cover w-full h-full"
+                    src={tribute.image || "/avatar.png"}
+                    alt={tribute.name}
+                  />
+                </figure>
+              </Link>
+              <div className="card-body space-y-3">
+                <h2 className="card-title text-secondary justify-center">
                   {tribute.name}
                 </h2>
-                <p className="mb-3 text-sm text-center text-base-content/70">
-                  {tribute.description}
+                <p className="text-center text-sm text-base-content/70">
+                  {tribute.description.slice(0, 100)}...
                 </p>
 
-                {/* Birth & Death Dates */}
-                <div className="mt-4 flex justify-between items-center text-sm text-base-content/80 bg-base-200 p-3 rounded-lg">
-                  <div className="flex flex-col items-center">
+                <div className="flex justify-between bg-base-200 p-3 rounded-lg text-sm">
+                  <div className="text-center text-base-content/80">
                     <span className="font-semibold text-primary">Born</span>
-                    <span>{new Date(tribute.dob).toDateString()}</span>
+                    <br />
+                    {new Date(tribute.dob).toDateString()}
                   </div>
-                  <div className="text-lg font-bold text-error">✝</div>
-                  <div className="flex flex-col items-center">
+                  <div className="text-lg text-error font-bold self-center">
+                    ✝
+                  </div>
+                  <div className="text-center text-base-content/80">
                     <span className="font-semibold text-primary">Passed</span>
-                    <span>{new Date(tribute.dod).toDateString()}</span>
+                    <br />
+                    {new Date(tribute.dod).toDateString()}
                   </div>
                 </div>
 
-                <div className="divider"></div>
-
-                {/* Like & Give Fund Buttons */}
-                <div className="flex justify-between items-center">
-                  <Link
-                    className="btn btn-error btn-outline flex items-center gap-2"
-                    href="/login"
+                <div className="flex flex-col gap-2 text-center mt-2 text-base-content">
+                  <p>
+                    <span className="font-semibold">Likes:</span>{" "}
+                    {tribute.likes?.length}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Total Fund Raised:</span> ₹
+                    {tribute.funding?.reduce(
+                      (acc, curr) => acc + curr.amount,
+                      0
+                    )}
+                  </p>
+                </div>
+                <div className="flex gap-4 items-center justify-center mt-4">
+                  <a
+                    href={`https://twitter.com/intent/tweet?text=Remembering ${encodeURIComponent(
+                      tribute.name
+                    )}&url=${encodeURIComponent(window.location.href)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm btn-ghost text-primary"
                   >
-                    <IconHeart /> Like
-                  </Link>
-                  <Link className="btn btn-success btn-outline" href="/login">
-                    Give Fund
-                  </Link>
+                    <IconBrandTwitter size={20} />
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                      window.location.href
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm btn-ghost text-primary"
+                  >
+                    <IconBrandLinkedin size={20} />
+                  </a>
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                      window.location.href
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm btn-ghost text-primary"
+                  >
+                    <IconBrandFacebook size={20} />
+                  </a>
                 </div>
-
-                <div className="divider"></div>
-
-                {/* Tribute Owner */}
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="w-12 rounded-full">
-                      <img
-                        src={
-                          tribute.user?.profileImage || "/user-placeholder.png"
-                        }
-                        alt={tribute.user?.name}
-                      />
-                    </div>
+                {tribute.supportingDocument && (
+                  <div className="text-sm text-center mt-4">
+                    <span className="font-medium text-base-content">
+                      Supporting Document:{" "}
+                    </span>
+                    <a
+                      href={tribute.supportingDocument}
+                      target="_blank"
+                      className="text-primary underline break-words"
+                    >
+                      {tribute.supportingDocument.split("/").pop()}
+                    </a>
                   </div>
-                  <div>
-                    <p className="font-semibold text-base-content">
-                      {tribute.user?.name}
-                    </p>
-                    <p className="text-xs text-base-content">
-                      {tribute.user?.email}
-                    </p>
-                  </div>
-                </div>
+                )}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
 

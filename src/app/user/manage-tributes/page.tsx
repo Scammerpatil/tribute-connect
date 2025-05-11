@@ -1,7 +1,7 @@
 "use client";
 
 import { Tribute } from "@/types/Tribute";
-import { IconHeart, IconTrash } from "@tabler/icons-react";
+import { IconEye, IconHeart, IconPencil, IconTrash } from "@tabler/icons-react";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ const ManageTributesPage = () => {
           <img
             src="/404.png"
             alt="No tributes found"
-            className="mx-auto h-96"
+            className="mx-auto h-80"
           />
           <h2 className="text-2xl font-bold text-base-content mt-4">
             No Tributes Found
@@ -39,7 +39,7 @@ const ManageTributesPage = () => {
           {tributes.map((tribute) => (
             <div
               key={tribute._id}
-              className="card bg-base-100 shadow-xl border border-primary"
+              className="card bg-base-300 shadow-xl border border-primary"
             >
               <figure className="h-52 overflow-hidden">
                 <img
@@ -87,28 +87,27 @@ const ManageTributesPage = () => {
                   </p>
                 </div>
 
-                {tribute.isAdminApproved ? (
-                  <button className="btn btn-error btn-outline w-full flex items-center justify-center gap-2">
-                    <IconTrash size={18} /> Delete Tribute
-                  </button>
-                ) : (
-                  <p className="text-sm text-center text-warning font-medium mt-2">
-                    ✨ Tribute is pending admin approval
-                  </p>
-                )}
-
-                <div className="grid grid-cols-1 gap-2 mt-3">
+                <div className="flex flex-row flex-wrap items-center justify-center gap-2 mt-4">
+                  {tribute.isAdminApproved ? (
+                    <button className="btn btn-sm btn-error btn-outline flex items-center justify-center gap-2">
+                      <IconTrash size={18} /> Delete Tribute
+                    </button>
+                  ) : (
+                    <p className="text-sm text-center text-warning font-medium mt-2">
+                      ✨ Tribute is pending admin approval
+                    </p>
+                  )}
                   <Link
                     href={`/user/learnmore?id=${tribute._id}`}
-                    className="btn btn-primary btn-outline w-full"
+                    className="btn btn-sm btn-primary btn-outline"
                   >
-                    View Tribute
+                    <IconEye size={18} /> View Tribute
                   </Link>
                   <Link
                     href={`/user/edit-tribute?id=${tribute._id}`}
-                    className="btn btn-secondary btn-outline w-full flex items-center justify-center gap-2"
+                    className="btn btn-sm btn-secondary btn-outline flex items-center justify-center gap-2"
                   >
-                    <IconHeart size={18} /> Edit Tribute
+                    <IconPencil size={18} /> Edit Tribute
                   </Link>
                 </div>
 

@@ -5,6 +5,7 @@ import { Tribute } from "@/types/Tribute";
 import axios from "axios";
 import Link from "next/link";
 import {
+  IconBell,
   IconChevronLeft,
   IconChevronRight,
   IconHeart,
@@ -12,6 +13,7 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { User } from "@/types/user";
 
 const TributesPage = () => {
   const { user } = useAuth();
@@ -121,15 +123,22 @@ const TributesPage = () => {
                 <div className="flex justify-between items-center mt-4">
                   <button
                     className={`btn btn-error ${
-                      !tribute.likes?.includes(user?._id)
+                      !tribute.likes?.includes(user?._id as unknown as User)
                         ? "btn-outline"
-                        : "btn-error "
+                        : "btn-error"
                     } flex items-center gap-2`}
                     onClick={() => {
+                      if (tribute.likes?.includes(user?._id)) {
+                        toast.error("Already liked");
+                        return;
+                      }
                       handleLike(tribute._id as string);
                     }}
                   >
-                    <IconHeart /> Like
+                    <IconHeart />{" "}
+                    {tribute.likes?.includes(user?._id)
+                      ? "Liked"
+                      : `${tribute.likes?.length} Likes`}
                   </button>
                   <Link
                     className="btn btn-success btn-outline"
@@ -146,14 +155,38 @@ const TributesPage = () => {
                         : "btn-warning"
                     } flex items-center gap-2`}
                     onClick={() => {
-                      user?.pinnedTribute?.includes(tribute._id)
+                      user?.pinnedTribute?.includes(
+                        tribute._id! as unknown as Tribute
+                      )
                         ? toast.error("Already pinned")
                         : handlePin(tribute._id as string);
                     }}
                   >
-                    <IconPin /> Pin
+                    <IconPin />{" "}
+                    {user?.pinnedTribute?.includes(
+                      tribute._id! as unknown as Tribute
+                    )
+                      ? "Pinned"
+                      : "Pin Tribute"}
                   </button>
                 )}
+                {user?.isPremiumHolder && (
+                  <button
+                    className={`btn btn-info mt-3 ${
+                      !user?.pinnedTribute?.includes(
+                        tribute._id as unknown as Tribute
+                      )
+                        ? "btn-outline"
+                        : "btn-info"
+                    } flex items-center gap-2`}
+                    onClick={() => {
+                      toast("Functionality coming soon...");
+                    }}
+                  >
+                    <IconBell /> Set Reminder
+                  </button>
+                )}
+
                 <div className="divider" />
                 <p className="text-center font-semibold text-base-content">
                   Total Fund Raised: ₹

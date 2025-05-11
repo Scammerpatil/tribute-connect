@@ -5,7 +5,12 @@ import jwt from "jsonwebtoken";
 dbConfig();
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
-
+  if (!token) {
+    const tributes = await Tribute.find({ isAdminApproved: true }).populate(
+      "user"
+    );
+    return NextResponse.json({ tributes }, { status: 200 });
+  }
   try {
     const decoded = jwt.verify(token!, process.env.JWT_SECRET!);
     if (decoded.role === "admin") {

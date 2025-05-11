@@ -14,11 +14,6 @@ const PaymentSchema = new Schema(
       type: String,
       required: true,
     },
-    reason: {
-      enum: ["premium", "donation"],
-      type: String,
-      required: true,
-    },
     method: {
       type: String,
       required: true,

@@ -51,7 +51,7 @@ const Users = () => {
         Welcome to the Users Page!
       </h1>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-base-300 rounded-lg shadow-lg">
         <table className="table table-zebra">
           {/* Table Head */}
           <thead className="text-base-content bg-base-200 text-base ">
